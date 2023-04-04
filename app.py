@@ -246,5 +246,5 @@ def generate_markdown(screenshot_urls, phrase_texts, title):
     return markdown
 
 
-if __name__ == '__main__':
-    app.run(host="localhost", port=8000, debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)

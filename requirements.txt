@@ -36,6 +36,8 @@ google-cloud-storage==2.7.0
 google-crc32c==1.5.0
 google-resumable-media==2.4.1
 googleapis-common-protos==1.59.0
+gunicorn
+huggingface-hub==0.13.3
 idna==3.4
 importlib-metadata==5.0.0
 importlib-resources==5.10.0
@@ -102,11 +104,13 @@ stable-ts @ git+https://github.com/jianfch/stable-ts.git@15792c74c9465ca8ab5b8ae
 stack-data==0.6.1
 terminado==0.17.0
 tinycss2==1.2.1
+tokenizers==0.13.2
 torch==1.13.1
 torchaudio==0.13.1
 tornado==6.2
 tqdm==4.65.0
 traitlets==5.5.0
+transformers==4.27.4
 typing_extensions==4.5.0
 urllib3==1.26.14
 virtualenv==20.14.1
