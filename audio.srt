@@ -1,0 +1,47 @@
+1
+00:00:00,640 --> 00:00:03,320
+This is the main readme landing page.
+
+2
+00:00:03,320 --> 00:00:05,940
+I click on the big eye workspace.
+
+3
+00:00:08,260 --> 00:00:09,820
+Then you go to guides.
+
+4
+00:00:11,920 --> 00:00:16,920
+You pick the category that you want
+
+5
+00:00:17,820 --> 00:00:22,140
+to create a new page under.
+
+6
+00:00:22,140 --> 00:00:27,140
+So this could be email.
+
+7
+00:00:27,140 --> 00:00:32,140
+You write it marked down here.
+
+8
+00:00:32,140 --> 00:00:38,140
+And make sure to turn off the live link.
+
+9
+00:00:38,140 --> 00:00:40,820
+Otherwise the page will immediately be live.
+
+10
+00:00:40,820 --> 00:00:41,740
+Click save.
+
+11
+00:00:41,740 --> 00:00:46,740
+And then you can delete the page if you want.
+
+12
+00:00:46,740 --> 00:00:51,600
+You want.
