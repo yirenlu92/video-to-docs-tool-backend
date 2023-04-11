@@ -1,0 +1,48 @@
+# Copyright 2021 Google LLC
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+runtime: python
+env: flex
+entrypoint: gunicorn -b :$PORT app:app --timeout 180
+env_variables:
+  CELERY_BROKER_URL: "pubsub://projects/frindle-video-to-tutorial/topics/process-videos"
+  CELERY_RESULT_BACKEND: "rpc://"
+  OPENAI_API_KEY: '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'
+  GCS_CREDENTIALS: '{
+  "type": "service_account",
+  "project_id": "frindle-video-to-tutorial",
+  "private_key_id": "e714feb7cd0f38ea13ba4c9505559a1805d27de6",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCctp/EMGDoy4k0\nLslhF2B59PdKLTvj9pzEVTmCqaLMNxK7AeKtahGAIvb08Zl7e/jCQjeMOpXLgQNl\npIkKkkEvfydJvi1KcKKfi1f2LeC2shIu0XCSLFm1XEXO1iYRMqYCnYzIiK9MR04x\nO2fgRoBVp2Wv9qUvU8R4UWfJw3Bp6Y/Q7Dj2HSUbJ6FPXALCuatdIUw3v7FiT9Vr\nI9i+DIv2bOQASez/l87z/nahUtF4bF9jEUQbrWymQnfQymam1x4z0nZJZE3wjAfA\nCjSTh0mUWe2GEAyrlLpZ6JMuZmMz7bT4EbgsYz633Y1C0mdhfx46LnXMZOpAX2DO\ngRRCDC4xAgMBAAECggEAA8TAgs9HBVIfsomNfjA5ubUSXU5JKmo7ytzhzSqXJ6IL\naUPaV6E9Wn98wNcugbGxgbpl65FdGM+5bTBPu1lZB/Ne1n8kR639uyh2rQzdYodV\nuJqAwoMehSX658Zuk+tL4rQ3NntS+9qbHsP284W+gFDOOTUNM94n01zhyhBRG7rg\neXrgWVEVd+fPNsOFbykZY7oxiPjrFTl6X310g7EPoeGhPFibuuRWHQReTEeGj0Is\nxLVAWkgDWN0r3t1WMzxoKErOUBdMA8IDSKWEpbKFMB0nD+fiUsFg8UkcSQDwFbED\n4gMiVtXYB/LNzhHJDSNLCyROepyoZiR8+H8aDVrlgQKBgQDXzmmsg9O5wK/ZaQxh\nHMtMZLCk6j37D4ydcBAzuubveCiedT3L1/Vf7Bb2uoFBT3Zvb9qPPCY2MmQfh+qj\neG3/ch6yy6KoAwATMypCtZU7gC5nOPHYFo6NZ3GQkXfflji2hpeKWel6bdbsUoBi\nOhkb9VNXv7kwNWht++APGhDrPQKBgQC55q0igaXhck0KZ9DmFez7bM/2DruH196S\nyblUQeqYHeYzrdWJ2FrMX93dXCBe+g9F5eQEN9WRRk1VB7QOdXWQWULvNBLZaVGi\nQBMQiFBzAuV8YhS/MvX7IjZuIKGq0s66YL5YYrCHklZDO8HrVsYkT1uA/JE/b4f8\naLVl5OdOBQKBgBusaHiq3veu8d3bTq8VViyRrOU49IHBWLLHsAwyJ3MF4Y+QUUBW\njSyjxb4V5IVPf0yC92/usqe4hoZUk44q31AmfjFHU7Bf0h6kLQMo7d4XbdvmvXyM\nR/NyFGoJfWm6hcNCNySSqxH8C9d6LORrttSS/QD/oOvBrYaNCgpluU2xAoGATBga\nQoejKNcqpdm87pGHAZuWvHdnV8GK/7bGv7CDoGSMuBat09DVydZr8JInRflBizEA\n1qEsMF0Aho+yqkB2MPH4rgU4ufmcSrfDlf7WP12uJe3X5DOt8HAeq5F723qS2EOF\nZpRvAe9qk/a/9977GB3LrM61favfk/ggWGcMLykCgYBrI2efw1OYUAF7Ju4ISp1b\nDmqequu/92/J9LuE2oUycvpzWixFmbMzWv4YZ2Knvi2WuLtOjIjNiOjnRKUm2K7O\nKTlMr/Dom9TpA8aiTgFzP3Vv/FF9E8/VWwAx8In/qtTGyM6D/WwBB+oediZtxja0\nPoc0nNOJ7jQTSuxxaO7Ubw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "screenshots-access@frindle-video-to-tutorial.iam.gserviceaccount.com",
+  "client_id": "110807958003088335373",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/screenshots-access%40frindle-video-to-tutorial.iam.gserviceaccount.com"
+}'
+
+runtime_config:
+  operating_system: "ubuntu18"
+  runtime_version: "3.8"
+
+# This sample incurs costs to run on the App Engine flexible environment.
+# The settings below are to reduce costs during testing and are not appropriate
+# for production use. For more information, see:
+# https://cloud.google.com/appengine/docs/flexible/python/configuring-your-app-with-app-yaml
+manual_scaling:
+  instances: 2
+resources:
+  cpu: 2
+  memory_gb: 4
+  disk_size_gb: 30
