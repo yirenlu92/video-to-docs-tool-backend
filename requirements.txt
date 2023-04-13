@@ -131,7 +131,6 @@ click-repl==0.2.0
 Deprecated==1.2.13
 flower==1.0.0
 humanize==4.0.0
-importlib-metadata==4.11.3
 kombu==5.2.4
 pytz==2022.1
 redis==4.2.2
