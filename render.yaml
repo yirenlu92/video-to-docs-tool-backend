@@ -4,7 +4,7 @@ services:
     region: ohio
     env: docker
     plan: standard
-    dockerCommnad: "celery --app tasks worker --loglevel info --concurrency 4"
+    dockerCommand: "celery --app tasks worker --loglevel info --concurrency 4"
     autoDeploy: false
     envVars:
       - key: CELERY_BROKER_URL
