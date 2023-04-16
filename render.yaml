@@ -14,13 +14,15 @@ services:
           property: connectionString
       - key: PYTHON_VERSION
         value: 3.8.2
+    # A Docker web service
   - type: web
     name: app
-    region: ohio
-    env: python
-    buildCommand: "pip install -r requirements.txt"
-    startCommand: "gunicorn app:app"
-    autoDeploy: false
+    env: docker
+    region: ohio # optional (defaults to oregon)
+    plan: standard # optional (defaults to starter instance type)
+    rootDir: app
+    numInstances: 3 # optional (defaults to 1)
+    healthCheckPath: /
     envVars:
       - key: CELERY_BROKER_URL
         fromService:

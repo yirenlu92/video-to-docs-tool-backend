@@ -2,7 +2,6 @@ import os
 
 from flask import Flask, request, jsonify, redirect, flash
 from flask_cors import CORS
-from google.cloud import tasks_v2
 import json
 from celery.result import AsyncResult
 from tasks import extract_screenshots, extract_screenshots_from_video_and_upload_celery
@@ -34,7 +33,7 @@ app.secret_key = os.getenv('FLASK_SECRET_KEY', "super-secret")
 
 @app.route('/')
 def health():
-    return 'Hello Ren'
+    return 'Hello Ren this is the video to docs backend'
 
 @app.route('/extract_screenshots_from_video_and_upload_to_google_storage', methods=['POST'])
 def extract_screenshots_from_video_and_upload_to_google_storage():
