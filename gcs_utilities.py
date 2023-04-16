@@ -8,11 +8,11 @@ def create_bucket_class_location(bucket_name):
     """
     
     # Access GCS credentials from the environment variable
-    # gcs_credentials_json = os.environ.get("GCS_CREDENTIALS")
+    gcs_credentials_json = os.environ.get("GCS_CREDENTIALS")
 
     # get credentials from file
-    with open("gcs_credentials.json", "r") as f:
-        gcs_credentials_json = f.read()
+    # with open("gcs_credentials.json", "r") as f:
+    #     gcs_credentials_json = f.read()
 
 
     # Parse the JSON string into a Python dictionary
