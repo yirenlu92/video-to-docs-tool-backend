@@ -17,6 +17,11 @@ RUN apt-get update && \
     apt-get install -y git && \
     rm -rf /var/lib/apt/lists/*
 
+# Install ffmpeg
+RUN apt-get update && \
+    apt-get install -y ffmpeg && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install psutil and dependencies for OpenCV
 RUN apt-get update && \
     apt-get install -y gcc python3-dev libgl1-mesa-glx libglib2.0-0 && \
