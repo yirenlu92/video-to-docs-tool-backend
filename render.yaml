@@ -2,9 +2,9 @@ services:
   - type: worker
     name: queue
     region: ohio
-    env: python
-    buildCommand: "pip install -r requirements_queue.txt"
-    startCommand: "celery --app tasks worker --loglevel info --concurrency 4"
+    env: docker
+    plan: standard
+    dockerCommnad: "celery --app tasks worker --loglevel info --concurrency 4"
     autoDeploy: false
     envVars:
       - key: CELERY_BROKER_URL

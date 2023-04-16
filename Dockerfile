@@ -1,5 +1,5 @@
 # Base image
-FROM python:3.8.2-slim-buster
+FROM python:3.8.2-slim-buster as base
 
 # Install Rust compiler
 RUN apt-get update && \
@@ -38,8 +38,10 @@ WORKDIR /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
+# Build image
+FROM base as flask_app
 # Expose port
 EXPOSE 8000
-
 # Run the application using gunicorn
 CMD ["gunicorn", "-b", "0.0.0.0:8000", "app:app", "--timeout", "180"]
+
