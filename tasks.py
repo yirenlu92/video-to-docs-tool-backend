@@ -4,9 +4,9 @@ from uuid import uuid4
 from celery import Celery
 from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
-from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs
+from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt
 
-app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"))
+app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
 logger = get_task_logger(__name__)
 
 
@@ -27,12 +27,16 @@ def extract_screenshots(input_video, title):
     folder_name = slug + "-" + str(uuid4())
     bucket = create_bucket_class_location("video-tutorial-screenshots")
 
+    print("got to creating the bucket")
+
     # upload the video to the bucket
     blob = bucket.blob(f"{folder_name}/video.mp4")
     blob.upload_from_filename(input_path, content_type="video/mp4")
 
     # get the public URL of the video
     video_url = blob.public_url
+
+    print("public url of video")
 
     # read the audio.srt file contents
     with open("audio.srt", "r") as f:

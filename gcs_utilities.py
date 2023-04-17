@@ -1,5 +1,6 @@
 import json
 from google.cloud import storage
+import os
 
 def create_bucket_class_location(bucket_name):
     """

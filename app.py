@@ -5,6 +5,7 @@ from flask_cors import CORS
 import json
 from celery.result import AsyncResult
 from tasks import extract_screenshots, extract_screenshots_from_video_and_upload_celery
+from tasks import app as celery_app
 from video_utilities import transcribe_video_whisper
 
 
@@ -45,7 +46,7 @@ def extract_screenshots_from_video_and_upload_to_google_storage():
 
     folder_name = request.form.get("folder_name")
     
-    result = extract_screenshots_from_video_and_upload_celery.delay(video_url, timestamps, folder_name)
+    result = extract_screenshots_from_video_and_upload_celery.delay(folder_name, video_url, timestamps)
 
     return {"task_id": result.id}
     
@@ -72,8 +73,8 @@ def upload():
     return {"task_id": result.id}
 
 
-@app.get("/result/<id>")
-def task_result(id: str):
+@app.route("/task_status/<id>")
+def task_status(id: str):
     result = AsyncResult(id)
     return {
         "ready": result.ready(),
@@ -82,5 +83,5 @@ def task_result(id: str):
     }
 
 if __name__ == '__main__':
-    # app.run(host='127.0.0.1', port=8080, debug=True)
-    app.run(debug=True, host="0.0.0.0")
+    app.run(host='127.0.0.1', port=8080, debug=True)
+    # app.run(debug=True, host="0.0.0.0")

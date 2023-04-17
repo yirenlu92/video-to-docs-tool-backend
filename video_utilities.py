@@ -3,6 +3,7 @@ import requests
 import cv2
 import stable_whisper
 import openai
+import os
 
 def download_video(url):
     response = requests.get(url)
