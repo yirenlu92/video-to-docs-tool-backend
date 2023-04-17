@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../video-to-docs-tool-frontend"
+		}
+	],
+	"settings": {}
+}

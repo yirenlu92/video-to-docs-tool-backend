@@ -66,7 +66,8 @@ def transcript_to_tutorial_instructions_with_chatgpt(transcript):
     completion = openai.ChatCompletion.create(
     model="gpt-4",
     temperature=0.1,
-    messages=messages
+    messages=messages,
+    timeout=30
     )
 
     return completion.choices[0].message["content"]

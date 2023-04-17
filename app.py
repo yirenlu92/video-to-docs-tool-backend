@@ -12,23 +12,6 @@ from video_utilities import transcribe_video_whisper
 app = Flask(__name__)
 CORS(app)
 
-# celery = Celery(
-#         app.name,
-#         broker='pubsub://projects/frindle-video-to-tutorial/topics/process-videos', backend='rpc://'
-#         # broker='redis://default:e3e0236e350746edb4a4cad5a601a9f0@us1-polite-flamingo-37407.upstash.io:37407/0',
-#         # backend='redis://default:e3e0236e350746edb4a4cad5a601a9f0@us1-polite-flamingo-37407.upstash.io:37407/0'
-#     )
-# celery.conf.update(
-#     task_serializer='json',
-#     result_serializer='json',
-#     accept_content=['json'],
-#     broker_transport_options={
-#         'transport': GCloudPubSubTransport,
-#         'project_id': 'frindle-video-to-tutorial',
-#         'keyfile': './gcs_credentials.json'
-#     }
-# )
-
 app.secret_key = os.getenv('FLASK_SECRET_KEY', "super-secret")
 
 
