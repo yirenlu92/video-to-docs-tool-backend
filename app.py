@@ -59,11 +59,24 @@ def upload():
 @app.route("/task_status/<id>")
 def task_status(id: str):
     result = AsyncResult(id)
-    return {
-        "ready": result.ready(),
-        "successful": result.successful(),
-        "value": result.result if result.ready() else None,
-    }
+
+    try:
+        # check if the task has completed successfully
+        if result.ready() and not result.failed():
+            task_output = result.get()
+            return {
+                "ready": result.ready(),
+                "successful": result.successful(),
+                "value": result.result if result.ready() else None,
+            }
+        else:
+            # handle the case where the task has not yet completed
+            return {"ready": result.ready(), "successful": result.successful()}
+
+    except Exception as e:
+        # handle any exceptions that occur during the task execution
+        print(f"Error occurred while processing task: {e}")
+        return {"error": e}
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)

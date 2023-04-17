@@ -64,7 +64,7 @@ def transcript_to_tutorial_instructions_with_chatgpt(transcript):
     ]
 
     completion = openai.ChatCompletion.create(
-    model="gpt-4",
+    model="gpt-3.5-turbo",
     temperature=0.1,
     messages=messages,
     timeout=30
