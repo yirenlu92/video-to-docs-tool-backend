@@ -55,7 +55,7 @@ def transcribe_video_whisper(video_path):
 def transcript_to_tutorial_instructions_with_chatgpt(transcript):
 
     prompt = f"""
-    Please lightly rewrite the transcript into a step by step tutorial for the software, mapping each of the steps to a timestamp in the video that it would correspond to. You may want to combine a few of the steps for brevity. The tutorial should have the format:\n\n    Step 1: Navigate to the main readme landing page -- 00:00:00,640 --> 00:00:03,320\n\n    ...\n\n\"\"\"\n1\n{transcript}\"\"\"
+    Please lightly rewrite the transcript into a step by step tutorial for the software, mapping each of the steps to a timestamp in the video that it would correspond to. You may want to combine a few of the steps for brevity. The tutorial should have the format:\n\n    Navigate to the main readme landing page -- 00:00:00,640 --> 00:00:03,320\n\n    ...\n\n\"\"\"\n1\n{transcript}\"\"\"
     """
 
     messages=[

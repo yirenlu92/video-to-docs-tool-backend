@@ -12,9 +12,6 @@ from video_utilities import transcribe_video_whisper
 app = Flask(__name__)
 CORS(app)
 
-app.secret_key = os.getenv('FLASK_SECRET_KEY', "super-secret")
-
-
 @app.route('/')
 def health():
     return 'Hello Ren this is the video to docs backend'
@@ -32,10 +29,8 @@ def extract_screenshots_from_video_and_upload_to_google_storage():
     result = extract_screenshots_from_video_and_upload_celery.delay(folder_name, video_url, timestamps)
 
     return {"task_id": result.id}
-    
 
 
-#add flask routes
 @app.route("/upload", methods=["POST"])
 def upload():
     # get the title from the form
