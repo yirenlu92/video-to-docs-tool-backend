@@ -4,7 +4,7 @@ from flask import Flask, request, jsonify, redirect, flash
 from flask_cors import CORS
 import json
 from celery.result import AsyncResult
-from tasks import extract_screenshots, extract_screenshots_from_video_and_upload_celery
+from tasks import extract_screenshots, extract_screenshots_from_video_and_upload_celery, transcribe_video_and_extract_screenshots
 from tasks import app as celery_app
 from video_utilities import transcribe_video_whisper
 
@@ -43,6 +43,7 @@ def upload():
     video.save(video_name)
 
     # transcribe the video
+    result = transcribe_video_and_extract_screenshots.delay(video_name, title)
     transcribe_video_whisper(video_name)
 
     # extract screenshots from video

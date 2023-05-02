@@ -5,6 +5,14 @@ import stable_whisper
 import openai
 import os
 
+def transcribe_video_whisper(video_path):
+    model = stable_whisper.load_model('base')
+    # modified model should run just like the regular model but accepts additional parameters
+    results = model.transcribe(video_path)
+
+    # sentence/phrase-level
+    stable_whisper.results_to_sentence_srt(results, 'audio.srt')
+
 def download_video(url):
     response = requests.get(url)
     video_data = response.content
@@ -42,15 +50,6 @@ def upload_screenshots_to_gcs(screenshots, folder_name, bucket):
         public_urls.append(blob.public_url)
 
     return public_urls
-
-def transcribe_video_whisper(video_path):
-    model = stable_whisper.load_model('base')
-    # modified model should run just like the regular model but accepts additional parameters
-    results = model.transcribe(video_path)
-
-    # sentence/phrase-level
-    stable_whisper.results_to_sentence_srt(results, 'audio.srt')
-
 
 def transcript_to_tutorial_instructions_with_chatgpt(transcript):
 

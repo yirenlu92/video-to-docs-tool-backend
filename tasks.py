@@ -4,14 +4,18 @@ from uuid import uuid4
 from celery import Celery
 from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
-from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt
+from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcribe_video_whisper
 
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
 logger = get_task_logger(__name__)
 
+@app.task
+def transcribe_video_and_extract_screenshots(video_name, title):
+    transcribe_video_whisper(video_name)
+    return extract_screenshots(video_name, title)
+
 
 # Extract relevant screenshots from the video
-@app.task
 def extract_screenshots(input_video, title):
 
     # turn title into slug
