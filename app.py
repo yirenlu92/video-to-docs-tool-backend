@@ -44,10 +44,6 @@ def upload():
 
     # transcribe the video
     result = transcribe_video_and_extract_screenshots.delay(video_name, title)
-    transcribe_video_whisper(video_name)
-
-    # extract screenshots from video
-    result = extract_screenshots.delay(video_name, title)
 
     return {"task_id": result.id}
 
