@@ -1,6 +1,31 @@
 import json
 from google.cloud import storage
 import os
+from io import BytesIO
+
+def upload_video_to_gcs(id, title, video):
+
+     # turn title into slug
+    slug = title.lower().replace(" ", "-")
+    # create new bucket name with slug and generated id
+    folder_name = slug + "-" + str(id)
+    bucket = create_bucket_class_location("video-tutorial-screenshots")
+    print("got to creating the bucket")
+
+     # upload the video to the bucket
+    blob = bucket.blob(f"{folder_name}/video.mp4")
+
+    # Save video to memory using BytesIO and upload to GCS
+    video_stream = BytesIO(video.read())
+    video_stream.seek(0)
+    blob.upload_from_file(video_stream, content_type="video/mp4")
+    video_stream.close()
+
+    # get the public URL of the video
+    video_url = blob.public_url
+
+    print("public url of video")
+    return (video_url, folder_name)
 
 def create_bucket_class_location(bucket_name):
     """

@@ -7,11 +7,22 @@ import os
 
 def transcribe_video_whisper(video_path):
     model = stable_whisper.load_model('base')
+
+    print("transcribing video in video utilities")
+
     # modified model should run just like the regular model but accepts additional parameters
     results = model.transcribe(video_path)
 
     # sentence/phrase-level
     stable_whisper.results_to_sentence_srt(results, 'audio.srt')
+
+def transcribe_video_whisper_api(video_path):
+
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    audio_file = open(video_path, "rb")
+    transcript = openai.Audio.transcribe("whisper-1", audio_file)
+    return transcript
+
 
 def download_video(url):
     response = requests.get(url)

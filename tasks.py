@@ -1,48 +1,63 @@
 import os
 import json
+import sys
 from uuid import uuid4
 from celery import Celery
 from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
-from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcribe_video_whisper
+from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcribe_video_whisper_api
+from database_utilities import fetch_project_data, update_project_status, insert_timestamps_and_text
 
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
 logger = get_task_logger(__name__)
 
 @app.task
-def transcribe_video_and_extract_screenshots(video_name, title):
-    transcribe_video_whisper(video_name)
-    return extract_screenshots(video_name, title)
+def transcribe_video_and_extract_screenshots(project_id, video_url, title):
+
+    # fetch the project data from supabase
+    project_data = fetch_project_data(project_id)
+
+    print("printing the project data")
+    print(project_data)
+
+    # check the status of the project
+    if project_data["task_status"] == 1:
+        return
+    
+    print("transcribing video")
+    print(video_url)
+
+    # download the video from the video_url
+    video_data = download_video(video_url)
+
+    video_path = "video.mp4"
+
+    # Replace 'output_video.mp4' with the desired output file path
+    with open(video_path, 'wb') as output_file:
+        output_file.write(video_data)
+
+    # openai_transcript = transcribe_video_whisper_api(video_path)
+    # print("whisper openai transcript")
+    # print(openai_transcript)
+
+    timestamps_and_text = extract_screenshots()
+
+    # insert the timestamps and text into the database
+    insert_timestamps_and_text(project_id, timestamps_and_text["phrase_texts"], timestamps_and_text["relevant_frames"])
+
+    # update the status of the project to be "completed"
+    update_project_status(project_id, 1)
+
+    return
 
 
 # Extract relevant screenshots from the video
-def extract_screenshots(input_video, title):
-
-    # turn title into slug
-    slug = title.lower().replace(" ", "-")
-
-    # Set up the paths for the input video and output screenshots
-    input_path = input_video
+def extract_screenshots():
 
     phrase_texts = []
     relevant_frames = []
 
-    # create new bucket name with slug and generated id
-    folder_name = slug + "-" + str(uuid4())
-    bucket = create_bucket_class_location("video-tutorial-screenshots")
-
-    print("got to creating the bucket")
-
-    # upload the video to the bucket
-    blob = bucket.blob(f"{folder_name}/video.mp4")
-    blob.upload_from_filename(input_path, content_type="video/mp4")
-
-    # get the public URL of the video
-    video_url = blob.public_url
-
-    print("public url of video")
-
-    # read the audio.srt file contents
+    # read the transcript from database
     with open("audio.srt", "r") as f:
         srt = f.read()
 
@@ -77,7 +92,7 @@ def extract_screenshots(input_video, title):
             phrase_texts.append(lines[0])
     
     # return as json
-    return json.dumps({"relevant_frames": relevant_frames, "phrase_texts": phrase_texts, "video_url": video_url, "folder_name": folder_name})
+    return {"relevant_frames": relevant_frames, "phrase_texts": phrase_texts}
 
 
 
