@@ -5,16 +5,27 @@ import stable_whisper
 import openai
 import os
 
-def transcribe_video_whisper(video_path):
+def transcribe_video_whisper(video_url):
     model = stable_whisper.load_model('base')
 
     print("transcribing video in video utilities")
 
     # modified model should run just like the regular model but accepts additional parameters
-    results = model.transcribe(video_path)
+    results = model.transcribe(video_url)
 
     # sentence/phrase-level
     stable_whisper.results_to_sentence_srt(results, 'audio.srt')
+
+# def transcribe_video_whisper(video_path):
+#     model = stable_whisper.load_model('base')
+
+#     print("transcribing video in video utilities")
+
+#     # modified model should run just like the regular model but accepts additional parameters
+#     results = model.transcribe(video_path)
+
+#     # sentence/phrase-level
+#     stable_whisper.results_to_sentence_srt(results, 'audio.srt')
 
 def transcribe_video_whisper_api(video_path):
 

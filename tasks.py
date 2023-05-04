@@ -5,7 +5,7 @@ from uuid import uuid4
 from celery import Celery
 from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
-from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcribe_video_whisper_api
+from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcribe_video_whisper_api, transcribe_video_whisper
 from database_utilities import fetch_project_data, update_project_status, insert_timestamps_and_text
 
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
@@ -28,13 +28,15 @@ def transcribe_video_and_extract_screenshots(project_id, video_url, title):
     print(video_url)
 
     # download the video from the video_url
-    video_data = download_video(video_url)
+    # video_data = download_video(video_url)
 
-    video_path = "video.mp4"
+    # video_path = "video.mp4"
 
     # Replace 'output_video.mp4' with the desired output file path
-    with open(video_path, 'wb') as output_file:
-        output_file.write(video_data)
+    # with open(video_path, 'wb') as output_file:
+    #     output_file.write(video_data)
+
+    transcribe_video_whisper(video_url)
 
     # openai_transcript = transcribe_video_whisper_api(video_path)
     # print("whisper openai transcript")
