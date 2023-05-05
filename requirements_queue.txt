@@ -31,3 +31,6 @@ wcwidth==0.2.5
 Werkzeug==2.1.1
 wrapt==1.14.0
 zipp==3.8.0
+supabase
+stable-ts @ git+https://github.com/jianfch/stable-ts.git@15792c74c9465ca8ab5b8ae84210df195725d542
+
