@@ -3,12 +3,12 @@ from google.cloud import storage
 import os
 from io import BytesIO
 
-def upload_video_to_gcs(id, title, video):
+def upload_video_to_gcs(project_id, title, video):
 
      # turn title into slug
     slug = title.lower().replace(" ", "-")
     # create new bucket name with slug and generated id
-    folder_name = slug + "-" + str(id)
+    folder_name = slug + "-" + str(project_id)
     bucket = create_bucket_class_location("video-tutorial-screenshots")
     print("got to creating the bucket")
 

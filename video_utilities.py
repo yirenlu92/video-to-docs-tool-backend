@@ -4,35 +4,56 @@ import cv2
 import stable_whisper
 import openai
 import os
+from pydub import AudioSegment
+
+
+def chunk_video_and_merge_transcript(video_path):
+     # chunk up video file
+    chunk_up_video_file(video_path)
+
+    # get the paths of all the video chunks
+    video_chunk_paths = []
+    for filename in os.listdir("video_chunks"):
+        video_chunk_paths.append("video_chunks/" + filename)
+    
+    whole_transcript = ""
+    for path in video_chunk_paths:
+        # transcribe the video chunk
+        transcript_chunk = transcribe_video_whisper_api(path)
+        whole_transcript += transcript_chunk
+
+    print("open ai transcript:")
+    print(whole_transcript)
+    return whole_transcript
+
+
+def chunk_up_video_file(video_path):
+
+    song = AudioSegment.from_file(video_path)
+
+    # PyDub handles time in milliseconds
+    ten_minutes = 10 * 60 * 1000
+
+    # chunk up the song in increments of ten minutes
+    for i, chunk in enumerate(song[::ten_minutes]):
+        with open(f"video_chunks/video_{i}.mp4", "wb") as f:
+            chunk.export(f, format="mp4")
 
 def transcribe_video_whisper(video_url):
     model = stable_whisper.load_model('base')
 
-    print("transcribing video in video utilities")
-
     # modified model should run just like the regular model but accepts additional parameters
-    results = model.transcribe(video_url)
+    result = model.transcribe(video_url)
 
-    # sentence/phrase-level
-    stable_whisper.results_to_sentence_srt(results, 'audio.srt')
-
-# def transcribe_video_whisper(video_path):
-#     model = stable_whisper.load_model('base')
-
-#     print("transcribing video in video utilities")
-
-#     # modified model should run just like the regular model but accepts additional parameters
-#     results = model.transcribe(video_path)
-
-#     # sentence/phrase-level
-#     stable_whisper.results_to_sentence_srt(results, 'audio.srt')
+    sentences = result.to_srt_vtt(word_level=False)
+    return sentences
 
 def transcribe_video_whisper_api(video_path):
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
     audio_file = open(video_path, "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file)
-    return transcript
+    return transcript['text']
 
 
 def download_video(url):
@@ -72,6 +93,26 @@ def upload_screenshots_to_gcs(screenshots, folder_name, bucket):
         public_urls.append(blob.public_url)
 
     return public_urls
+
+def transcript_to_blog_post_with_chatgpt(transcript):
+
+    prompt = f"""
+    This is a transcript of a video demo of how to monitor Stripe data with Bigeye. Please lightly rewrite the transcript into a tutorial with an introduction, and appropriate instructions formatted in markdown paragraphs separated by newlines. 
+    """
+
+    messages=[
+        {"role": "system", "content": "You are transcribing the audio of a software demo video. The timestamps correspond to the times that the phrases were spoken."},
+        {"role": "user", "content": prompt},
+    ]
+
+    completion = openai.ChatCompletion.create(
+    model="gpt-3.5-turbo",
+    temperature=0.1,
+    messages=messages,
+    timeout=30
+    )
+
+    return completion.choices[0].message["content"]
 
 def transcript_to_tutorial_instructions_with_chatgpt(transcript):
 

@@ -6,9 +6,9 @@ SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJ
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-def insert_project(project_id: int, task_status: str, video_url: str, title: str, folder_name: str):
+def insert_project(project_id: int, user_id: int, task_status: str, video_url: str, title: str, folder_name: str):
     response = supabase.table("projects").insert([
-        {"project_id": str(project_id), "task_status": task_status, "video_url": video_url, "title": title, "folder_name": folder_name}
+        {"project_id": str(project_id), "user_id": str(user_id), "task_status": task_status, "video_url": video_url, "title": title, "folder_name": folder_name}
     ]).execute()
 
     print(response.data)
@@ -26,6 +26,13 @@ def fetch_project_data(project_id: int):
 
 def update_project_status(project_id: int, task_status: str):
     response = supabase.table("projects").update({"task_status": task_status}).eq("project_id", project_id).execute()
+
+    print(response.data)
+
+    assert len(response.data) >= 1
+
+def update_markdown_project_status(project_id: int, task_id: str, screenshot_urls: list):
+    response = supabase.table("projects").update({"markdown_task_id": task_id, "screenshot_urls": json.dumps(screenshot_urls)}).eq("project_id", project_id).execute()
 
     print(response.data)
 

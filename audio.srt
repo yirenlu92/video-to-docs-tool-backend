@@ -1,47 +1,35 @@
+0
+00:00:00,740 --> 00:00:04,660
+In this demo, let's show how to add a source in Big Eye.
+
 1
-00:00:00,640 --> 00:00:03,320
-This is the main readme landing page.
+00:00:06,740 --> 00:00:09,520
+So here from the app.big Eye.com page,
 
 2
-00:00:03,320 --> 00:00:05,940
-I click on the big eye workspace.
+00:00:09,520 --> 00:00:14,280
+you first go to catalog and then to add source.
 
 3
-00:00:08,260 --> 00:00:09,820
-Then you go to guides.
+00:00:15,320 --> 00:00:17,000
+We add a data source.
 
 4
-00:00:11,920 --> 00:00:16,920
-You pick the category that you want
+00:00:17,240 --> 00:00:20,680
+You choose the type of data warehouse or database
 
 5
-00:00:17,820 --> 00:00:22,140
-to create a new page under.
+00:00:20,680 --> 00:00:22,060
+that you want to connect.
 
 6
-00:00:22,140 --> 00:00:27,140
-So this could be email.
+00:00:22,580 --> 00:00:22,960
+So let's
 
 7
-00:00:27,140 --> 00:00:32,140
-You write it marked down here.
+00:00:23,920 --> 00:00:25,380
+choose snowflake.
 
 8
-00:00:32,140 --> 00:00:38,140
-And make sure to turn off the live link.
-
-9
-00:00:38,140 --> 00:00:40,820
-Otherwise the page will immediately be live.
-
-10
-00:00:40,820 --> 00:00:41,740
-Click save.
-
-11
-00:00:41,740 --> 00:00:46,740
-And then you can delete the page if you want.
-
-12
-00:00:46,740 --> 00:00:51,600
-You want.
+00:00:25,620 --> 00:00:28,980
+Now let's enter our source details.
