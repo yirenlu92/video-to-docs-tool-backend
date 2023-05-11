@@ -67,7 +67,7 @@ notebook==6.5.2
 notebook_shim==0.2.2
 numpy==1.24.2
 openai==0.27.2
-openai-whisper==20230124
+openai-whisper==20230314
 opencv-python==4.7.0.72
 packaging==21.3
 pandocfilters==1.5.0

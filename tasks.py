@@ -5,7 +5,7 @@ from uuid import uuid4
 from celery import Celery
 from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
-from video_utilities import chunk_video_and_merge_transcript, chunk_up_video_file, download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcript_to_blog_post_with_chatgpt, transcribe_video_whisper_api, transcribe_video_whisper
+from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcript_to_blog_post_with_chatgpt, transcribe_video_whisper_api, transcribe_video_whisper
 from database_utilities import fetch_project_data, update_project_status, insert_timestamps_and_text, update_markdown_project_status
 
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
