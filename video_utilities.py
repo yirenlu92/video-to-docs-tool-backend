@@ -4,7 +4,6 @@ import cv2
 import stable_whisper
 import openai
 import os
-from pydub import AudioSegment
 
 
 def chunk_video_and_merge_transcript(video_path):
@@ -27,17 +26,17 @@ def chunk_video_and_merge_transcript(video_path):
     return whole_transcript
 
 
-def chunk_up_video_file(video_path):
+# def chunk_up_video_file(video_path):
 
-    song = AudioSegment.from_file(video_path)
+#     song = AudioSegment.from_file(video_path)
 
-    # PyDub handles time in milliseconds
-    ten_minutes = 10 * 60 * 1000
+#     # PyDub handles time in milliseconds
+#     ten_minutes = 10 * 60 * 1000
 
-    # chunk up the song in increments of ten minutes
-    for i, chunk in enumerate(song[::ten_minutes]):
-        with open(f"video_chunks/video_{i}.mp4", "wb") as f:
-            chunk.export(f, format="mp4")
+#     # chunk up the song in increments of ten minutes
+#     for i, chunk in enumerate(song[::ten_minutes]):
+#         with open(f"video_chunks/video_{i}.mp4", "wb") as f:
+#             chunk.export(f, format="mp4")
 
 def transcribe_video_whisper(video_url):
     model = stable_whisper.load_model('base')
