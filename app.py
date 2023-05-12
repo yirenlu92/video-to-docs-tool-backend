@@ -54,8 +54,8 @@ def upload():
     insert_project(project_id, user_id, 0, video_url, title, folder_name)
 
     # transcribe video
-    sentences = transcribe_video_whisper(video_url)
-    print(sentences)
+    # sentences = transcribe_video_whisper(video_url)
+    # print(sentences)
 
     # send the video processing task to the celery queue
     result = transcribe_video_and_extract_screenshots.delay(project_id, video_url, title)

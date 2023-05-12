@@ -6,24 +6,24 @@ import openai
 import os
 
 
-# def chunk_video_and_merge_transcript(video_path):
-#      # chunk up video file
-#     chunk_up_video_file(video_path)
+def chunk_video_and_merge_transcript(video_path):
+     # chunk up video file
+    chunk_up_video_file(video_path)
 
-#     # get the paths of all the video chunks
-#     video_chunk_paths = []
-#     for filename in os.listdir("video_chunks"):
-#         video_chunk_paths.append("video_chunks/" + filename)
+    # get the paths of all the video chunks
+    video_chunk_paths = []
+    for filename in os.listdir("video_chunks"):
+        video_chunk_paths.append("video_chunks/" + filename)
     
-#     whole_transcript = ""
-#     for path in video_chunk_paths:
-#         # transcribe the video chunk
-#         transcript_chunk = transcribe_video_whisper_api(path)
-#         whole_transcript += transcript_chunk
+    whole_transcript = ""
+    for path in video_chunk_paths:
+        # transcribe the video chunk
+        transcript_chunk = transcribe_video_whisper_api(path)
+        whole_transcript += transcript_chunk
 
-#     print("open ai transcript:")
-#     print(whole_transcript)
-#     return whole_transcript
+    print("open ai transcript:")
+    print(whole_transcript)
+    return whole_transcript
 
 
 # def chunk_up_video_file(video_path):
