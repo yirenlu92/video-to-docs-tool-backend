@@ -6,7 +6,11 @@ from celery import Celery
 from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
 from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcript_to_blog_post_with_chatgpt, transcribe_video_whisper_api, transcribe_video_whisper
-from database_utilities import fetch_project_data, update_project_status, insert_timestamps_and_text, update_markdown_project_status
+from database_utilities import fetch_project_data, update_error_message, update_project_status, insert_timestamps_and_text, update_markdown_project_status
+import modal
+
+stub = modal.Stub("example-doc-ocr-jobs")
+
 
 app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
 logger = get_task_logger(__name__)
@@ -20,21 +24,24 @@ def transcribe_video_and_extract_screenshots(project_id, video_url, title):
     # check the status of the project
     if project_data["task_status"] == 1:
         return
+    
+    try: 
+        sentences = transcribe_video_whisper(video_url)
 
-    sentences = transcribe_video_whisper(video_url)
+        timestamps_and_text = extract_screenshots(sentences)
 
-    timestamps_and_text = extract_screenshots(sentences)
+        # insert the timestamps and text into the database
+        insert_timestamps_and_text(project_id, timestamps_and_text["phrase_texts"], timestamps_and_text["relevant_frames"])
 
-    # # chunk up video to do transcription with openai
-    # whole_transcript = chunk_video_and_merge_transcript(video_path)
-
-    # timestamps_and_text = process_video_to_blog_post(whole_transcript)    
-
-    # insert the timestamps and text into the database
-    insert_timestamps_and_text(project_id, timestamps_and_text["phrase_texts"], timestamps_and_text["relevant_frames"])
-
-    # update the status of the project to be "completed"
-    update_project_status(project_id, 1)
+        # update the status of the project to be "completed"
+        update_project_status(project_id, 1)
+    
+    except Exception as e:
+        print(e)
+        # update the status of the project to be "failed"
+        update_project_status(project_id, 2)
+        update_error_message(project_id, str(e))
+        return
 
     return
 

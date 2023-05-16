@@ -38,6 +38,13 @@ def update_markdown_project_status(project_id: int, task_id: str, screenshot_url
 
     assert len(response.data) >= 1
 
+def update_error_message(project_id: int, error_message: str):
+    response = supabase.table("projects").update({"task_error_message": error_message}).eq("project_id", project_id).execute()
+
+    print(response.data)
+
+    assert len(response.data) >= 1
+
 
 def insert_timestamps_and_text(project_id: int, texts: list, timestamps: list):
     
