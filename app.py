@@ -3,12 +3,12 @@ import uuid
 from flask import Flask, request, jsonify, redirect, flash
 from flask_cors import CORS
 import json
-from celery.result import AsyncResult
-from tasks import extract_screenshots, extract_screenshots_from_video_and_upload_celery, transcribe_video_and_extract_screenshots
-from tasks import app as celery_app
+# from celery.result import AsyncResult
+# from tasks import app as celery_app
 from video_utilities import transcribe_video_whisper
-from gcs_utilities import upload_video_to_gcs
-from database_utilities import insert_project
+from gcs_utilities import upload_video_to_gcs, create_bucket_class_location
+from database_utilities import insert_project, update_or_add_screenshot_in_database
+import modal
 
 
 app = Flask(__name__)
@@ -18,20 +18,24 @@ CORS(app)
 def health():
     return 'Hello Ren this is the video to docs backend'
 
+
 @app.route('/extract_screenshots_from_video_and_upload_to_google_storage', methods=['POST'])
 def extract_screenshots_from_video_and_upload_to_google_storage():
-    video_url = request.form.get("video_url")
-    timestamps = request.form.get("timestamps")
-    project_id = request.form.get("project_id")
-    # convert timestamps from string to list of floats
-    timestamps = json.loads(timestamps)
-    timestamps = [float(timestamp) for timestamp in timestamps]
-
-    folder_name = request.form.get("folder_name")
     
-    result = extract_screenshots_from_video_and_upload_celery.delay(project_id, folder_name, video_url, timestamps)
+    # video_url = request.form.get("video_url")
+    # timestamps = request.form.get("timestamps")
+    # project_id = request.form.get("project_id")
+    # # convert timestamps from string to list of floats
+    # timestamps = json.loads(timestamps)
+    # timestamps = [float(timestamp) for timestamp in timestamps]
 
-    return {"task_id": result.id}
+    # folder_name = request.form.get("folder_name")
+
+    # fn = modal.Function.lookup("process-video-job", "extract_screenshots_from_video_and_upload")
+    # fn.spawn(project_id, folder_name, video_url, timestamps)
+
+    
+    return {"task_id": "random id"}
 
 
 @app.route("/upload", methods=["POST"])
@@ -53,16 +57,39 @@ def upload():
     # create a project entry in the database
     insert_project(project_id, user_id, 0, video_url, title, folder_name)
 
-    # transcribe video
-    # sentences = transcribe_video_whisper(video_url)
-    # print(sentences)
-
-    # send the video processing task to the celery queue
-    result = transcribe_video_and_extract_screenshots.delay(project_id, video_url, title)
+    fn = modal.Function.lookup("process-video-job", "process_video")
+    fn.spawn(project_id, video_url, title)
 
     return {"project_id": project_id}
 
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    # Get the file from POST request
+    file = request.files['file']
+    folder_name = request.form.get("folder_name")
+    idx = request.form.get("idx")
+    project_id = request.form.get("project_id")
+    file_name = f"{folder_name}/screenshot_{idx}.png"
+    
+    # Create a blob in the bucket
+    bucket_name = "video-tutorial-screenshots"
+    # create bucket if it doesn't already exist
+    bucket = create_bucket_class_location(bucket_name)
+
+    blob = bucket.blob(file_name)
+    # Upload the file to GCS
+    blob.upload_from_string(
+        file.read(),
+        content_type=file.content_type
+    )
+    public_url = blob.public_url
+
+    # update just that screenshot in the database
+    update_or_add_screenshot_in_database(project_id, idx, public_url)
+
+
+    # Get the blob's public URL and return it
+    return jsonify({'url': public_url}), 200
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8080, debug=True)
-    # app.run(debug=True, host="0.0.0.0")

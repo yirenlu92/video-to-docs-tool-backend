@@ -116,7 +116,7 @@ def transcript_to_blog_post_with_chatgpt(transcript):
 def transcript_to_tutorial_instructions_with_chatgpt(transcript):
 
     prompt = f"""
-    Please lightly rewrite the transcript into a step by step tutorial for the software, mapping each of the steps to a timestamp in the video that it would correspond to. You may want to combine a few of the steps for brevity. The tutorial should have the format:\n\n    Navigate to the main readme landing page -- 00:00:00,640 --> 00:00:03,320\n\n    ...\n\n\"\"\"\n1\n{transcript}\"\"\"
+    Please lightly rewrite the transcript into a step by step tutorial for the software, mapping each of the steps to a timestamp in the video that it would correspond to. You may want to combine a few of the steps for brevity. The output should show one text/timestamp pair per line and have the format:\n\n    Navigate to the main readme landing page -- 00:00:00,640 --> 00:00:03,320\n\nClick the Add button -- 00:00:03,425 --> 00:00:05,425\n\n...\n\n. Now please edit this transcript:\"\"\"{transcript}\"\"\"
     """
 
     messages=[

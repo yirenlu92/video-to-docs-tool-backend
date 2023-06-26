@@ -2,17 +2,10 @@ import os
 import json
 import sys
 from uuid import uuid4
-from celery import Celery
-from celery.utils.log import get_task_logger
 from gcs_utilities import create_bucket_class_location
 from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcript_to_blog_post_with_chatgpt, transcribe_video_whisper_api, transcribe_video_whisper
 from database_utilities import fetch_project_data, update_error_message, update_project_status, insert_timestamps_and_text, update_markdown_project_status
 
-
-app = Celery('tasks', broker=os.getenv("CELERY_BROKER_URL"), backend=os.getenv("CELERY_RESULT_BACKEND"))
-logger = get_task_logger(__name__)
-
-@app.task
 def transcribe_video_and_extract_screenshots(project_id, video_url, title):
 
     # fetch the project data from supabase
@@ -30,8 +23,10 @@ def transcribe_video_and_extract_screenshots(project_id, video_url, title):
         # insert the timestamps and text into the database
         insert_timestamps_and_text(project_id, timestamps_and_text["phrase_texts"], timestamps_and_text["relevant_frames"])
 
-        # update the status of the project to be "completed"
-        update_project_status(project_id, 1)
+        # # update the status of the project to be "completed"
+        # update_project_status(project_id, 1)
+
+        print("just inserted timestamps and text")
     
     except Exception as e:
         print(e)
@@ -72,10 +67,14 @@ def extract_screenshots(srt):
     instructions = instructions.split("\n")
     # remove empty strings and strip whitespace
     instructions = [instruction.strip() for instruction in instructions if instruction != ""]
-    # first line is the instruction, second line is the timestamp
     print(instructions)
     for i, instruction in enumerate(instructions):
         lines = instruction.split(" -- ")
+
+        # if the line does not contain a timestamp, continue to the next line
+        if len(lines) < 2:
+            continue
+
         # get the start times and end times
         start_time = lines[1].split(" --> ")[0]
         end_time = lines[1].split(" --> ")[1]
@@ -100,9 +99,9 @@ def extract_screenshots(srt):
     return {"relevant_frames": relevant_frames, "phrase_texts": phrase_texts}
 
 
-@app.task
 def extract_screenshots_from_video_and_upload_celery(project_id, folder_name, video_url, timestamps):
 
+    from modal import current_input_id
 
     bucket_name = "video-tutorial-screenshots"
     # create bucket if it doesn't already exist
@@ -116,15 +115,11 @@ def extract_screenshots_from_video_and_upload_celery(project_id, folder_name, vi
     # update markdown task status, including with the task_id
 
     # get task id
-    task_id = extract_screenshots_from_video_and_upload_celery.request.id
-    update_markdown_project_status(project_id, task_id, screenshot_urls)
+
+    # task_id = extract_screenshots_from_video_and_upload_celery.request.id
+    update_markdown_project_status(project_id, screenshot_urls)
 
     # send back task_id
-    return {"task_id": task_id}
+    return {"task_id": current_input_id}
 
 
-
-@app.task
-def add(x, y):
-    logger.info(f'Adding {x} + {y}')
-    return x + y
