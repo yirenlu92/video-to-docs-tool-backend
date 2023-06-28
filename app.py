@@ -69,6 +69,7 @@ def upload_image():
     folder_name = request.form.get("folder_name")
     idx = request.form.get("idx")
     project_id = request.form.get("project_id")
+    
     file_name = f"{folder_name}/screenshot_{idx}.png"
     
     # Create a blob in the bucket
@@ -86,7 +87,6 @@ def upload_image():
 
     # update just that screenshot in the database
     update_or_add_screenshot_in_database(project_id, idx, public_url)
-
 
     # Get the blob's public URL and return it
     return jsonify({'url': public_url}), 200
