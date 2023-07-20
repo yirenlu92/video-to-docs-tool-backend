@@ -68,12 +68,13 @@ def upload_image():
     file = request.files['file']
     folder_name = request.form.get("folder_name")
     idx = request.form.get("idx")
+    screenshot_id = request.form.get("screenshot_id")
     project_id = request.form.get("project_id")
-    
     file_name = f"{folder_name}/screenshot_{idx}.png"
+    text = request.form.get("text")
     
     # Create a blob in the bucket
-    bucket_name = "video-tutorial-screenshots"
+    bucket_name = "video-tutorial-renderer"
     # create bucket if it doesn't already exist
     bucket = create_bucket_class_location(bucket_name)
 
@@ -86,7 +87,7 @@ def upload_image():
     public_url = blob.public_url
 
     # update just that screenshot in the database
-    update_or_add_screenshot_in_database(project_id, idx, public_url)
+    update_or_add_screenshot_in_database(project_id, idx, public_url, text, screenshot_id)
 
     # Get the blob's public URL and return it
     return jsonify({'url': public_url}), 200

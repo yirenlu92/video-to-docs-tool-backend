@@ -31,22 +31,26 @@ def update_project_status(project_id: int, task_status: str):
 
     assert len(response.data) >= 1
 
-def update_or_add_screenshot_in_database(project_id: int, index: int, screenshot_url: str):
+def update_or_add_screenshot_in_database(project_id: int, index: int, screenshot_url: str, text: str, screenshot_id: int):
 
     # if the screenshot already exists, update it
     # else, add it
 
     response = supabase.table("screenshots").select("*").eq("project_id", project_id).eq("index", index).execute()
     if response and response.data and len(response.data) >= 1:
-        print("updating existing row")
-        update_response = supabase.table("screenshots").update({"screenshot_url": screenshot_url}).eq("project_id", project_id).eq("index", index).execute()
+        update_response = supabase.table("screenshots").update({"screenshot_url": screenshot_url, "text": text}).eq("project_id", project_id).eq("index", index).execute()
     else:
-        print("inserting new row")
         insert_response = supabase.table("screenshots").insert([
-            {"project_id": str(project_id), "index": index, "screenshot_url": screenshot_url}
+            {"project_id": str(project_id), "index": index, "screenshot_url": screenshot_url, "text": text}
         ]).execute()
 
+def fetch_screenshot_row(project_id: int, index: int):
+    response = supabase.table("screenshots").select("*").eq("project_id", project_id).eq("index", index).execute()
 
+    print(response.data)
+
+    assert len(response.data) >= 1
+    return response.data[0]
 
 def update_markdown_project_status(project_id: int, screenshot_urls: list):
     response = supabase.table("projects").update({"screenshot_urls": json.dumps(screenshot_urls)}).eq("project_id", project_id).execute()
@@ -64,15 +68,25 @@ def update_error_message(project_id: int, error_message: str):
 
 
 def insert_timestamps_and_text(project_id: int, texts: list, timestamps: list):
-
-    print("texts")
-    print(texts)
-
-    print("timestamps")
-    print(timestamps)
     
     # insert timestamps and text into the projects table of the database
     response = supabase.table("projects").update({"timestamps": json.dumps(timestamps), "texts": json.dumps(texts), "task_status": 1}).eq("project_id", project_id).execute()
+
+    print(response.data)
+
+    assert len(response.data) >= 1
+
+def insert_new_screenshot_in_screenshots_table(project_id: int, text: str, timestamp: str, index: int):
+    print("inserting new screenshots in screenshots table")
+
+    # insert timestamps and text into the projects table of the database
+    response = supabase.table("screenshots").update({"timestamp": timestamp, "text": text, "annotations": [], "zoom_pan_settings": {
+  "x": 0,
+  "y": 0,
+  "zoom": 1
+}}).eq("project_id", project_id).eq("index", index).execute()
+    
+    print ("response from inserting new screenshot in screenshots table")
 
     print(response.data)
 

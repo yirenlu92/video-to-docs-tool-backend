@@ -4,7 +4,7 @@ import sys
 from uuid import uuid4
 from gcs_utilities import create_bucket_class_location
 from video_utilities import download_video, extract_screenshot_images, upload_screenshots_to_gcs, transcript_to_tutorial_instructions_with_chatgpt, transcript_to_blog_post_with_chatgpt, transcribe_video_whisper_api, transcribe_video_whisper
-from database_utilities import fetch_project_data, update_error_message, update_project_status, insert_timestamps_and_text, update_markdown_project_status
+from database_utilities import fetch_project_data, update_error_message, update_project_status, insert_new_screenshot_in_screenshots_table, update_markdown_project_status
 
 def transcribe_video_and_extract_screenshots(project_id, video_url, title):
 
@@ -20,11 +20,13 @@ def transcribe_video_and_extract_screenshots(project_id, video_url, title):
 
         timestamps_and_text = extract_screenshots(sentences)
 
-        # insert the timestamps and text into the database
-        insert_timestamps_and_text(project_id, timestamps_and_text["phrase_texts"], timestamps_and_text["relevant_frames"])
+        # create entries in the screenshots table
+        for i, timestamp_and_text in enumerate(timestamps_and_text):
+            # insert the timestamps and text into the database
+            insert_new_screenshot_in_screenshots_table(project_id, timestamp_and_text["phrase_text"], timestamp_and_text["relevant_frame"], i)
 
-        # # update the status of the project to be "completed"
-        # update_project_status(project_id, 1)
+        # update the status of the project to be "completed"
+        update_project_status(project_id, 1)
 
         print("just inserted timestamps and text")
     
@@ -95,8 +97,8 @@ def extract_screenshots(srt):
         # add the phrase text to the list
         phrase_texts.append(lines[0])
     
-    # return as json
-    return {"relevant_frames": relevant_frames, "phrase_texts": phrase_texts}
+    # return as array of objects
+    return [{"relevant_frame": relevant_frame, "phrase_text": phrase_text} for relevant_frame, phrase_text in zip(relevant_frames, phrase_texts)]
 
 
 def extract_screenshots_from_video_and_upload_celery(project_id, folder_name, video_url, timestamps):
