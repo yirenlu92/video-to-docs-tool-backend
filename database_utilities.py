@@ -80,14 +80,10 @@ def insert_new_screenshot_in_screenshots_table(project_id: int, text: str, times
     print("inserting new screenshots in screenshots table")
 
     # insert timestamps and text into the projects table of the database
-    response = supabase.table("screenshots").update({"timestamp": timestamp, "text": text, "annotations": [], "zoom_pan_settings": {
-  "x": 0,
-  "y": 0,
-  "zoom": 1
-}}).eq("project_id", project_id).eq("index", index).execute()
+    response = supabase.table("screenshots").insert({"project_id": str(project_id), "index": index, "timestamp": timestamp, "text": text, "annotations": [], "zoom_pan_settings": json.dumps({"x": 0, "y": 0, "zoom": 1})}).execute()
     
     print ("response from inserting new screenshot in screenshots table")
 
-    print(response.data)
+    print(response)
 
     assert len(response.data) >= 1
