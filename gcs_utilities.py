@@ -57,7 +57,7 @@ def create_bucket_class_location(bucket_name):
     # otherwise create bucket and make it publically available
     print("Creating bucket {}".format(bucket_name))
     bucket = storage_client.bucket(bucket_name)
-    bucket.storage_class = "COLDLINE"
+    bucket.storage_class = "STANDARD"
     new_bucket = storage_client.create_bucket(bucket, location="us")
     # make bucket publically available
     bucket.default_object_acl.all().grant_read()

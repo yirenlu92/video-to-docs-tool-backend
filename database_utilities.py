@@ -78,8 +78,9 @@ def insert_timestamps_and_text(project_id: int, texts: list, timestamps: list):
 
 def insert_new_screenshot_in_screenshots_table(project_id: int, text: str, timestamp: str, index: int):
 
+    print("in the insert new screenshot in screenshots table function")
     # insert timestamps and text into the projects table of the database
-    response = supabase.table("screenshots").insert({"project_id": str(project_id), "index": index, "timestamp": timestamp, "text": text, "annotations": [], "zoom_pan_settings": json.dumps({"x": 0, "y": 0, "zoom": 1})}).execute()
+    response = supabase.table("screenshots").insert({"project_id": str(project_id), "index": index, "timestamp": timestamp, "text": text, "annotations": [], "zoom_pan_settings": {"x": 0, "y": 0, "zoom": 1}}).execute()
     
     print ("response from inserting new screenshot in screenshots table")
 

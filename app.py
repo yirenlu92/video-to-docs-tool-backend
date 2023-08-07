@@ -79,6 +79,10 @@ def upload_image():
     bucket = create_bucket_class_location(bucket_name)
 
     blob = bucket.blob(file_name)
+
+    # Set Cache-Control to private
+    blob.cache_control = "private"
+
     # Upload the file to GCS
     blob.upload_from_string(
         file.read(),
