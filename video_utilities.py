@@ -39,12 +39,18 @@ def chunk_video_and_merge_transcript(video_path):
 #             chunk.export(f, format="mp4")
 
 def transcribe_video_whisper(video_url):
+
+    print("beginnign of transcription")
     model = stable_whisper.load_model('base')
 
     # modified model should run just like the regular model but accepts additional parameters
     result = model.transcribe(video_url)
 
     sentences = result.to_srt_vtt(word_level=False)
+
+    print("got sentences back in the transcription")
+
+    print(sentences)
     return sentences
 
 def transcribe_video_whisper_api(video_path):
@@ -116,7 +122,7 @@ def transcript_to_blog_post_with_chatgpt(transcript):
 def transcript_to_tutorial_instructions_with_chatgpt(transcript):
 
     prompt = f"""
-    Please lightly rewrite the transcript into a step by step tutorial for the software, mapping each of the steps to a timestamp in the video that it would correspond to. You may want to combine a few of the steps for brevity. The output should show one text/timestamp pair per line and have the format:\n\n    Navigate to the main readme landing page -- 00:00:00,640 --> 00:00:03,320\n\nClick the Add button -- 00:00:03,425 --> 00:00:05,425\n\n...\n\n. Now please edit this transcript:\"\"\"{transcript}\"\"\"
+    Please lightly rewrite the transcript into a step by step tutorial for the software, mapping each of the steps to a timestamp in the video that it would correspond to. Please only include the instructions in the transcript. Don't make up additional instructions. You may want to combine a few of the steps for brevity. The output should show one text/timestamp pair per line. Here's an example:\n\n    Give instruction one -- 00:00:00,640 --> 00:00:03,320\n\nGive instruction 2 -- 00:00:03,425 --> 00:00:05,425\n\n...\n\n. Now please edit this transcript:\"\"\"{transcript}\"\"\"
     """
 
     messages=[
@@ -125,7 +131,7 @@ def transcript_to_tutorial_instructions_with_chatgpt(transcript):
     ]
 
     completion = openai.ChatCompletion.create(
-    model="gpt-3.5-turbo",
+    model="gpt-4-0613",
     temperature=0.1,
     messages=messages,
     timeout=30
