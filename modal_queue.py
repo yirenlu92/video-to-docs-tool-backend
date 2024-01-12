@@ -1,7 +1,4 @@
-import urllib.request
 from typing import List
-
-from tasks import transcribe_video_and_extract_screenshots, extract_screenshots_from_video_and_upload_celery
 
 import modal
 
@@ -32,6 +29,8 @@ secret=modal.Secret.from_name("video-to-tutorial-keys"),
 )
 def process_video(project_id: str, video_url: str, title: str):
    
+   from tasks import transcribe_video_and_extract_screenshots
+   
    transcribe_video_and_extract_screenshots(project_id, video_url, title)
 
 @stub.function(
@@ -40,6 +39,8 @@ def process_video(project_id: str, video_url: str, title: str):
     retries=3,
 )
 def extract_screenshots_from_video_and_upload(project_id: str, folder_name: str, video_url: str, timestamps: List[int]):   
+   
+   from tasks import extract_screenshots_from_video_and_upload_celery
    
    extract_screenshots_from_video_and_upload_celery(project_id, folder_name, video_url, timestamps)
    
